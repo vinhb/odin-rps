@@ -1,4 +1,9 @@
 const CHOICES = ['rock', 'paper', 'scissors'];
+const BUTTONS = document.querySelectorAll('button');
+const scoreBoard = document.querySelector('div');
+
+let playerScore = 0;
+let computerScore = 0;
 
 function convertChoice(choice) {
     let value;
@@ -12,22 +17,6 @@ function convertChoice(choice) {
     return value;
 }
 
-function playerPlay() {
-
-    let playerChoice = prompt('Rock, paper, scissors?');
-    
-    function validateChoice() {
-        while (playerChoice === null
-            || !CHOICES.includes(playerChoice.toLowerCase())) {
-            playerChoice = prompt('Please input a valid value.');
-        }
-    }
-    
-    validateChoice();
-    return convertChoice(playerChoice);
-}
-
-
 function computerPlay() {
 
     let choiceIndex = Math.floor(Math.random() * 3);
@@ -38,41 +27,31 @@ function computerPlay() {
 
 function playRound(playerSelection, computerSelection) {
     if (playerSelection === computerSelection) {
-        alert(
-            `Computer also picked ${CHOICES[computerSelection]}. It's a tie.`
-            )
+        return 0
+            
     } else {
         if (playerSelection === 0) {
             if (computerSelection === 2) {
-                alert(
-                    `Computer chose ${CHOICES[computerSelection]}. You win!`
-                    )
+                return 1
+                    
             } else {
-                alert(
-                    `Computer chose ${CHOICES[computerSelection]}. You lose...`
-                    )
+                return -1                    
             }
             
         } else if (playerSelection === 1) {
             if (computerSelection === 0) {
-                alert(
-                    `Computer chose ${CHOICES[computerSelection]}. You win!`
-                    )
+                return 1
             } else {
-                alert(
-                    `Computer chose ${CHOICES[computerSelection]}. You lose...`
-                    )
+                return -1
+
             }
         } else {
             if (playerSelection === 2) {
                 if (computerSelection === 1) {
-                    alert(
-                        `Computer chose ${CHOICES[computerSelection]}. You win!`
-                        )
+                return 1
+                        
                 } else {
-                    alert(
-                        `Computer chose ${CHOICES[computerSelection]}. You lose...`
-                        )
+                    return -1
                 }
             }
         }
@@ -80,11 +59,51 @@ function playRound(playerSelection, computerSelection) {
 
 }
 
-function game() {
-    for (let i = 0; i < 5; i++) {
-        playRound(playerPlay(), computerPlay());
+function checkWinner() {
+    if (playerScore === 5 || computerScore === 5) {
+        playerScore === 5 ? alert('You win!') : alert('You lose. :(')
     }
 }
 
-game();
+BUTTONS.forEach( (button) => {
+    button.addEventListener('click', () => {
+        let playerMove = convertChoice(button.textContent.toLowerCase());
+        let computerMove = computerPlay();
+        const RESULT = playRound(playerMove, computerMove);
+        scoreBoard.innerText = '';
+
+        if (RESULT === 0) {
+            // change div text to be You picked ___. Computer also selected ___. It's a tie.
+            scoreBoard.innerText = `You picked ${CHOICES[playerMove]}. 
+            Computer also selected ${CHOICES[computerMove]}. It's a tie. 
+            
+            The score is: 
+            player: ${playerScore}
+            computer: ${computerScore}` //undoes move conversion to print result string
+        } else if (RESULT === 1) {
+            playerScore += 1;
+            scoreBoard.innerText = `You picked ${CHOICES[playerMove]}. 
+            Computer also selected ${CHOICES[computerMove]}. You win!
+            
+            The score is: 
+            player: ${playerScore}
+            computer: ${computerScore}
+            `
+            
+        } else {
+            computerScore += 1;
+            scoreBoard.innerText = `You picked ${CHOICES[playerMove]}. 
+            Computer also selected ${CHOICES[computerMove]}. You lose...
+            
+            The score is: 
+            player: ${playerScore}
+            computer: ${computerScore}
+            `
+            
+        }
+
+        checkWinner();
+        
+    });
+});
 
